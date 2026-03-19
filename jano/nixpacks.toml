@@ -1,5 +1,2 @@
-[phases.build]
-cmds = ["pip install -r requirements.txt"]
-
-[phases.deploy]
+[start]
 cmd = "python manage.py migrate && gunicorn jano.wsgi"
