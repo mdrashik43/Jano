@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Jano — Just Ask</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap"
@@ -28,17 +28,22 @@
             padding: 0;
         }
 
+        html {
+            height: 100%;
+        }
+
         body {
             font-family: 'DM Sans', sans-serif;
             background: var(--bg);
-            height: 100vh;
+            /* dvh = dynamic viewport height — shrinks when mobile keyboard opens */
+            height: 100dvh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             color: var(--text);
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* Animated background */
         body::before {
             content: '';
             position: fixed;
@@ -62,7 +67,6 @@
             }
         }
 
-        /* Floating particles */
         .particles {
             position: fixed;
             inset: 0;
@@ -75,7 +79,6 @@
             position: absolute;
             width: 2px;
             height: 2px;
-            background: var(--accent);
             border-radius: 50%;
             animation: float linear infinite;
             opacity: 0;
@@ -101,17 +104,20 @@
             }
         }
 
-        /* Header */
+        /* Header — fixed, never moves */
         .header {
+            flex-shrink: 0;
             position: relative;
             z-index: 10;
-            padding: 16px 20px;
+            padding: 14px 20px;
+            padding-top: calc(14px + env(safe-area-inset-top));
             display: flex;
             align-items: center;
             gap: 14px;
             border-bottom: 1px solid var(--border);
-            background: rgba(13, 13, 26, 0.85);
+            background: rgba(13, 13, 26, 0.92);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -128,20 +134,20 @@
         }
 
         .header-icon {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
             background: linear-gradient(135deg, var(--accent), var(--accent2));
-            border-radius: 14px;
+            border-radius: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 19px;
             font-family: 'Sora', sans-serif;
             font-weight: 800;
             color: white;
             box-shadow: 0 0 20px var(--glow), 0 4px 12px rgba(0, 0, 0, 0.4);
             animation: iconPop 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
-            flex-shrink: 0;
         }
 
         @keyframes iconPop {
@@ -158,6 +164,7 @@
 
         .header-info {
             flex: 1;
+            min-width: 0;
         }
 
         .header-title {
@@ -175,16 +182,19 @@
             font-size: 11px;
             color: var(--text-muted);
             margin-top: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .status-dot {
             width: 8px;
             height: 8px;
+            min-width: 8px;
             background: var(--accent3);
             border-radius: 50%;
             box-shadow: 0 0 8px var(--accent3);
             animation: pulse 2s ease-in-out infinite;
-            flex-shrink: 0;
         }
 
         @keyframes pulse {
@@ -201,21 +211,23 @@
             }
         }
 
-        /* Chat area */
+        /* Chat area — flex:1 fills remaining space */
         #chat {
             flex: 1;
             overflow-y: auto;
-            padding: 20px 16px;
+            overflow-x: hidden;
+            padding: 16px 14px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             position: relative;
             z-index: 1;
             scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
 
         #chat::-webkit-scrollbar {
-            width: 4px;
+            width: 3px;
         }
 
         #chat::-webkit-scrollbar-track {
@@ -227,20 +239,19 @@
             border-radius: 10px;
         }
 
-        /* Messages */
         .msg {
-            max-width: 80%;
-            padding: 12px 16px;
+            max-width: 82%;
+            padding: 11px 15px;
             border-radius: 20px;
             font-size: 14px;
             line-height: 1.65;
             animation: msgIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-            position: relative;
+            word-break: break-word;
         }
 
         @keyframes msgIn {
             from {
-                transform: translateY(16px) scale(0.95);
+                transform: translateY(14px) scale(0.96);
                 opacity: 0;
             }
 
@@ -267,19 +278,22 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
-        /* Typing indicator */
+        .msg.agent.welcome {
+            background: linear-gradient(135deg, var(--surface), var(--surface2));
+            border-color: rgba(124, 109, 250, 0.3);
+        }
+
         .typing {
             align-self: flex-start;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 20px;
             border-bottom-left-radius: 5px;
-            padding: 14px 18px;
+            padding: 13px 16px;
             display: flex;
             gap: 5px;
             align-items: center;
             animation: msgIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .dot {
@@ -315,20 +329,28 @@
             }
         }
 
-        /* Suggestions */
+        /* Suggestions — horizontal scroll on mobile */
         .suggestions {
+            flex-shrink: 0;
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            padding: 0 16px 10px;
+            gap: 7px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 6px 14px 10px;
             position: relative;
             z-index: 1;
             animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .suggestions::-webkit-scrollbar {
+            display: none;
         }
 
         @keyframes fadeUp {
             from {
-                transform: translateY(10px);
+                transform: translateY(8px);
                 opacity: 0;
             }
 
@@ -339,46 +361,45 @@
         }
 
         .suggestion {
-            padding: 7px 14px;
+            padding: 7px 13px;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 99px;
             font-size: 12px;
             color: var(--accent);
             cursor: pointer;
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
             font-family: 'DM Sans', sans-serif;
             font-weight: 500;
-        }
-
-        .suggestion:hover {
-            background: rgba(124, 109, 250, 0.15);
-            border-color: var(--accent);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(124, 109, 250, 0.2);
+            white-space: nowrap;
+            flex-shrink: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .suggestion:active {
-            transform: translateY(0);
+            background: rgba(124, 109, 250, 0.2);
+            transform: scale(0.96);
         }
 
-        /* Input area */
+        /* Input area — always visible, sticks to bottom */
         #input-area {
-            padding: 12px 16px 16px;
-            background: rgba(13, 13, 26, 0.9);
+            flex-shrink: 0;
+            padding: 10px 14px 14px;
+            background: rgba(13, 13, 26, 0.96);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-top: 1px solid var(--border);
             display: flex;
             gap: 10px;
             align-items: center;
             position: relative;
             z-index: 10;
-            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
         @keyframes slideUp {
             from {
-                transform: translateY(100%);
+                transform: translateY(60px);
                 opacity: 0;
             }
 
@@ -390,15 +411,20 @@
 
         #question {
             flex: 1;
-            padding: 12px 18px;
+            min-width: 0;
+            /* CRITICAL — prevents overflow in flex on mobile */
+            padding: 12px 16px;
             border: 1px solid var(--border);
-            border-radius: 26px;
-            font-size: 14px;
+            border-radius: 24px;
+            font-size: 16px;
+            /* 16px prevents iOS auto-zoom on tap */
             outline: none;
             background: var(--surface);
             color: var(--text);
             font-family: 'DM Sans', sans-serif;
-            transition: all 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         #question::placeholder {
@@ -407,13 +433,15 @@
 
         #question:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(124, 109, 250, 0.15), 0 0 20px rgba(124, 109, 250, 0.1);
+            box-shadow: 0 0 0 3px rgba(124, 109, 250, 0.15);
             background: var(--surface2);
         }
 
         #send-btn {
             width: 46px;
             height: 46px;
+            min-width: 46px;
+            /* never shrink */
             background: linear-gradient(135deg, var(--accent), var(--accent2));
             border: none;
             border-radius: 50%;
@@ -422,17 +450,13 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            transition: all 0.25s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
             box-shadow: 0 4px 16px rgba(124, 109, 250, 0.4);
-        }
-
-        #send-btn:hover:not(:disabled) {
-            transform: scale(1.08) rotate(5deg);
-            box-shadow: 0 6px 24px rgba(124, 109, 250, 0.6);
+            -webkit-tap-highlight-color: transparent;
         }
 
         #send-btn:active:not(:disabled) {
-            transform: scale(0.94);
+            transform: scale(0.88);
         }
 
         #send-btn:disabled {
@@ -441,36 +465,27 @@
             cursor: not-allowed;
         }
 
-        /* Welcome message special style */
-        .msg.agent.welcome {
-            background: linear-gradient(135deg, var(--surface), var(--surface2));
-            border-color: rgba(124, 109, 250, 0.3);
-        }
-
-        /* Ripple on send */
         @keyframes sendPop {
             0% {
                 transform: scale(1);
             }
 
             40% {
-                transform: scale(0.88) rotate(-10deg);
+                transform: scale(0.85) rotate(-8deg);
             }
 
             100% {
-                transform: scale(1) rotate(5deg);
+                transform: scale(1) rotate(4deg);
             }
         }
 
         .sending {
-            animation: sendPop 0.3s ease;
+            animation: sendPop 0.25s ease;
         }
     </style>
 </head>
 
 <body>
-
-    <!-- Floating particles -->
     <div class="particles" id="particles"></div>
 
     <div class="header">
@@ -498,7 +513,7 @@
     <div id="input-area">
         <input type="text" id="question" placeholder="Banglish e jiggesh koro..." autocomplete="off" />
         <button id="send-btn" onclick="sendMessage()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
                 stroke-linecap="round" stroke-linejoin="round">
                 <line x1="22" y1="2" x2="11" y2="13"></line>
                 <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -512,9 +527,9 @@
         const btn = document.getElementById('send-btn');
         const suggestions = document.getElementById('suggestions');
 
-        // Generate particles
+        // Particles
         const particlesEl = document.getElementById('particles');
-        for (let i = 0; i < 18; i++) {
+        for (let i = 0; i < 14; i++) {
             const p = document.createElement('div');
             p.className = 'particle';
             const colors = ['#7c6dfa', '#fa6dbc', '#6dfabc', '#fad56d'];
@@ -528,6 +543,45 @@
             `;
             particlesEl.appendChild(p);
         }
+
+        // Sound engine
+        const SoundEngine = {
+            ctx: null,
+            init() {
+                if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            },
+            whoosh() {
+                try {
+                    this.init();
+                    const ctx = this.ctx;
+                    const duration = 0.35;
+                    const bufferSize = ctx.sampleRate * duration;
+                    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1);
+                    const source = ctx.createBufferSource();
+                    source.buffer = buffer;
+                    const filter = ctx.createBiquadFilter();
+                    filter.type = 'bandpass';
+                    filter.frequency.setValueAtTime(200, ctx.currentTime);
+                    filter.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + duration);
+                    filter.Q.value = 0.8;
+                    const gain = ctx.createGain();
+                    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                    source.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(ctx.destination);
+                    source.start();
+                    source.stop(ctx.currentTime + duration);
+                } catch (e) { }
+            }
+        };
+
+        // Scroll chat down when keyboard opens on mobile
+        input.addEventListener('focus', () => {
+            setTimeout(() => { chat.scrollTop = chat.scrollHeight; }, 350);
+        });
 
         input.addEventListener('keypress', e => {
             if (e.key === 'Enter') sendMessage();
@@ -552,6 +606,7 @@
             const question = input.value.trim();
             if (!question) return;
 
+            SoundEngine.whoosh();
             suggestions.style.display = 'none';
             addMsg(question, 'user');
             input.value = '';
@@ -559,7 +614,6 @@
             btn.classList.add('sending');
             setTimeout(() => btn.classList.remove('sending'), 300);
 
-            // Typing indicator
             const typing = document.createElement('div');
             typing.className = 'typing';
             typing.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
@@ -583,10 +637,7 @@
             btn.disabled = false;
             input.focus();
         }
-        
-            
     </script>
-
 </body>
 
 </html>
