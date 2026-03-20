@@ -1,2 +1,0 @@
-[start]
-cmd = "python manage.py migrate && gunicorn jano.wsgi"
